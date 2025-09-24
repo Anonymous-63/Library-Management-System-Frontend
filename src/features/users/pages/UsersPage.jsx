@@ -14,7 +14,7 @@ export default function UsersPage(){
   }
 
   const columns = [
-    { title: 'Username', dataIndex: 'username', key: 'username' },
+    { title: 'Id', dataIndex: 'id', key: 'id' },
     { title: 'Email', dataIndex: 'email', key: 'email' },
     {
       title: 'Action',
