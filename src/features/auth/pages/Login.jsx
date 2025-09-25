@@ -21,20 +21,35 @@ export default function Login() {
     }
 
     return (
-        <div className="min-h-screen flex items-center justify-center">
-            <Form name="login" onFinish={onFinish} style={{ width: 360 }}>
-                <Item name="email" rules={[{ required: true, message: 'Email is required' }]}>
-                    <Input placeholder="Email" />
-                </Item>
-                <Item name="password" rules={[{ required: true, message: 'Password is required' }]}>
-                    <Input.Password placeholder="Password" />
-                </Item>
-                <Item>
-                    <Button type="primary" htmlType="submit" loading={status === 'loading'} block>
-                        Sign in
-                    </Button>
-                </Item>
-            </Form>
+        // <div className="min-h-screen flex items-center justify-center">
+        //     <Form name="login" onFinish={onFinish} style={{ width: 360 }}>
+        //         <Item name="email" rules={[{ required: true, message: 'Email is required' }]}>
+        //             <Input placeholder="Email" />
+        //         </Item>
+        //         <Item name="password" rules={[{ required: true, message: 'Password is required' }]}>
+        //             <Input.Password placeholder="Password" />
+        //         </Item>
+        //         <Item>
+        //             <Button type="primary" htmlType="submit" loading={status === 'loading'} block>
+        //                 Sign in
+        //             </Button>
+        //         </Item>
+        //     </Form>
+        // </div>
+
+        <div className="card lg:card-side bg-base-100 shadow-sm">
+            <figure>
+                <img
+                    src="https://img.daisyui.com/images/stock/photo-1494232410401-ad00d5433cfa.webp"
+                    alt="Album" />
+            </figure>
+            <div className="card-body">
+                <h2 className="card-title">Login</h2>
+                <p>Click the button to listen on Spotiwhy app.</p>
+                <div className="card-actions justify-end">
+                    <button className="btn btn-primary">Listen</button>
+                </div>
+            </div>
         </div>
     )
 }

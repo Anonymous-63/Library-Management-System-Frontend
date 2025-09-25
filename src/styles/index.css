@@ -1,5 +1,9 @@
 @import "tailwindcss";
 
+@plugin "daisyui" {
+    themes: all;
+}
+
 /* Option 1: Calm & Professional (Blue Theme)
 
 Primary: #1E3A8A (Deep Navy Blue)
