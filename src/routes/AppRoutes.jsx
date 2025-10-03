@@ -2,7 +2,6 @@ import { Navigate, Route, Routes } from "react-router"
 import AuthLayout from "../layouts/AuthLayout"
 import Login from "../features/auth/pages/Login"
 import DashboardLayout from "../layouts/DashboardLayout"
-import UsersPage from "../features/users/pages/UsersPage"
 import { useSelector } from "react-redux"
 import DashboardLanding from "../layouts/DashboardLanding"
 

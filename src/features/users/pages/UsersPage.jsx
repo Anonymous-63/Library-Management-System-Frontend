@@ -1,7 +1,7 @@
-import { Button, Popconfirm, Table } from "antd"
 import { useEffect } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { deleteUser, fetchUsers } from "../usersSlice"
+import { Button } from "@mui/material"
 
 export default function UsersPage(){
   const dispatch = useDispatch()
@@ -21,7 +21,7 @@ export default function UsersPage(){
       key: 'action',
       render: (_, record) => (
         <Popconfirm title="Sure to delete?" onConfirm={() => handleDelete(record.id)}>
-          <Button danger size="small">Delete</Button>
+          <Button variant="text" size="small" color="error">Delete</Button>
         </Popconfirm>
       )
     }

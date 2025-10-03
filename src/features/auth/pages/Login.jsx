@@ -1,55 +1,112 @@
-import { Button, Form, Input } from "antd"
 import { useDispatch, useSelector } from "react-redux"
 import { useNavigate } from "react-router"
 import { login } from "../authSlice"
+import googleImg from "@/assets/icons/google.png"
+import githubImg from "@/assets/icons/github.png"
+import { Button, Card, Checkbox, Divider, Form, Input, Typography } from "antd"
+import { Content } from "antd/es/layout/layout"
+import { useState } from "react"
+const { Title, Text, Link } = Typography;
 
 export default function Login() {
     const dispatch = useDispatch()
     const navigate = useNavigate()
     const status = useSelector(s => s.auth.status)
 
-    const { Item } = Form
+    const [loading, setLoading] = useState(false);
 
     const onFinish = async (values) => {
-        console.log('Form values:', values)
+        setLoading(true);
         try {
-            const res = await dispatch(login(values)).unwrap()
-            navigate('/dashboard')
-        } catch (e) {
-            console.error('Login failed:', e)
+            const res = await dispatch(login(values)).unwrap();
+            navigate("/dashboard");
+        } catch (err) {
+            console.error("Login failed:", err);
+        } finally {
+            setLoading(false);
         }
-    }
+    };
 
     return (
-        // <div className="min-h-screen flex items-center justify-center">
-        //     <Form name="login" onFinish={onFinish} style={{ width: 360 }}>
-        //         <Item name="email" rules={[{ required: true, message: 'Email is required' }]}>
-        //             <Input placeholder="Email" />
-        //         </Item>
-        //         <Item name="password" rules={[{ required: true, message: 'Password is required' }]}>
-        //             <Input.Password placeholder="Password" />
-        //         </Item>
-        //         <Item>
-        //             <Button type="primary" htmlType="submit" loading={status === 'loading'} block>
-        //                 Sign in
-        //             </Button>
-        //         </Item>
-        //     </Form>
-        // </div>
+        <Card variant="outlined" className="w-full max-w-md">
+            <Title level={2} className="mb-4">
+                Sign In
+            </Title>
 
-        <div className="card lg:card-side bg-base-100 shadow-sm">
-            <figure>
-                <img
-                    src="https://img.daisyui.com/images/stock/photo-1494232410401-ad00d5433cfa.webp"
-                    alt="Album" />
-            </figure>
-            <div className="card-body">
-                <h2 className="card-title">Login</h2>
-                <p>Click the button to listen on Spotiwhy app.</p>
-                <div className="card-actions justify-end">
-                    <button className="btn btn-primary">Listen</button>
-                </div>
+            <Form layout="vertical" onFinish={onFinish}>
+                <Form.Item
+                    name="email"
+                    label="Email"
+                    rules={[
+                        { required: true, message: "Please input your email!" },
+                        { type: "email", message: "Please enter a valid email!" },
+                    ]}
+                >
+                    <Input
+                        type="email"
+                        placeholder="your@email.com"
+                        autoComplete="email"
+                        size="large"
+                    />
+                </Form.Item>
+
+                <Form.Item
+                    name="password"
+                    label="Password"
+                    rules={[{ required: true, message: "Please input your password!" }]}
+                >
+                    <Input.Password
+                        placeholder="******"
+                        autoComplete="current-password"
+                        size="large"
+                    />
+                </Form.Item>
+
+                <Form.Item name="remember" valuePropName="checked" className="!mb-2">
+                    <Checkbox>Remember me</Checkbox>
+                </Form.Item>
+
+                <Form.Item className="mt-4">
+                    <Button
+                        type="primary"
+                        size="large"
+                        className="w-full"
+                        htmlType="submit"
+                        loading={loading || status === "loading"}
+                    >
+                        Sign In
+                    </Button>
+                </Form.Item>
+            </Form>
+            <div className="text-center">
+                <Link to="/forgot-password" className="!text-gray-700 hover:!underline">
+                    Forgot your password?
+                </Link>
             </div>
-        </div>
+            <Divider plain className="!my-2">or</Divider>
+
+            <div className="flex flex-col gap-3">
+                <Button
+                    icon={<img src={googleImg} alt="Google" className="w-5 h-5" />}
+                    size="large"
+                    className="w-full"
+                >
+                    Sign in with Google
+                </Button>
+                <Button
+                    icon={<img src={githubImg} alt="Github" className="w-5 h-5" />}
+                    size="large"
+                    className="w-full"
+                >
+                    Sign in with Github
+                </Button>
+                <Text className="self-center">
+                    Don&apos;t have an account?{" "}
+                    <Link strong to="/register" className="text-blue-500">
+                        Sign Up
+                    </Link>
+                </Text>
+            </div>
+        </Card>
     )
 }

@@ -1,7 +1,12 @@
+import { Layout } from "antd";
+import { Content } from "antd/es/layout/layout";
+
 export default function AuthLayout({ children }) {
     return (
-        <div className="min-h-screen flex items-center justify-center bg-primary">
-            {children}
-        </div>
+        <Layout className="h-screen w-screen">
+            <Content className="flex justify-center items-center h-full">
+                {children}
+            </Content>
+        </Layout>
     )
 }
