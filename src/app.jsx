@@ -9,8 +9,17 @@ const App = () => {
 
   // Detect system preference on first load
   useEffect(() => {
-    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    setDarkMode(prefersDark);
+    const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+
+    // Set initial mode
+    setDarkMode(mediaQuery.matches);
+
+    // Listen for changes in system theme
+    const handleChange = (e) => setDarkMode(e.matches);
+    mediaQuery.addEventListener("change", handleChange);
+
+    // Cleanup
+    return () => mediaQuery.removeEventListener("change", handleChange);
   }, []);
 
   return (

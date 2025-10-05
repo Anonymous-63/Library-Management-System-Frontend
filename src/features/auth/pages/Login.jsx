@@ -3,110 +3,155 @@ import { useNavigate } from "react-router"
 import { login } from "../authSlice"
 import googleImg from "@/assets/icons/google.png"
 import githubImg from "@/assets/icons/github.png"
-import { Button, Card, Checkbox, Divider, Form, Input, Typography } from "antd"
-import { Content } from "antd/es/layout/layout"
-import { useState } from "react"
+import { Button, Card, Checkbox, Divider, Form, Input, notification, Typography } from "antd"
 const { Title, Text, Link } = Typography;
+import * as Yup from "yup";
+import { Controller, useForm } from "react-hook-form"
+import { yupResolver } from "@hookform/resolvers/yup"
+
+export const loginSchema = Yup.object().shape({
+    email: Yup.string()
+        .email("Invalid email address")
+        .required("Email is required"),
+    password: Yup.string()
+        .min(6, "Password must be at least 6 characters")
+        .required("Password is required"),
+});
 
 export default function Login() {
     const dispatch = useDispatch()
     const navigate = useNavigate()
-    const status = useSelector(s => s.auth.status)
+    const [notificationApi, contextHolder] = notification.useNotification();
 
-    const [loading, setLoading] = useState(false);
+    const { control, handleSubmit, formState: { errors, isSubmitting }, } = useForm({ resolver: yupResolver(loginSchema), mode: "onTouched" })
 
     const onFinish = async (values) => {
-        setLoading(true);
         try {
             const res = await dispatch(login(values)).unwrap();
             navigate("/dashboard");
         } catch (err) {
-            console.error("Login failed:", err);
-        } finally {
-            setLoading(false);
+            notificationApi.error({
+                message: 'Login Failed',
+                description: 'Please check your email and password.',
+                placement: 'topRight',
+                duration: 3,
+            });
         }
     };
 
+    const handleOAuthLogin = (provider) => {
+        const baseApi = import.meta.env.VITE_API_URL; // http://localhost:8080/api
+        const redirectUri = `${window.location.origin}/oauth2/redirect`;
+        window.location.href = `${baseApi}/oauth2/authorization/${provider}?redirect_uri=${encodeURIComponent(redirectUri)}`;
+    };
+
+
     return (
-        <Card variant="outlined" className="w-full max-w-md">
-            <Title level={2} className="mb-4">
-                Sign In
-            </Title>
+        <>
+            {contextHolder}
+            <Card variant="outlined" className="w-full max-w-md">
+                <Title level={2} className="mb-4">
+                    Sign In
+                </Title>
 
-            <Form layout="vertical" onFinish={onFinish}>
-                <Form.Item
-                    name="email"
-                    label="Email"
-                    rules={[
-                        { required: true, message: "Please input your email!" },
-                        { type: "email", message: "Please enter a valid email!" },
-                    ]}
-                >
-                    <Input
-                        type="email"
-                        placeholder="your@email.com"
-                        autoComplete="email"
-                        size="large"
-                    />
-                </Form.Item>
+                <Form layout="vertical" onFinish={handleSubmit(onFinish)}>
+                    <Form.Item
+                        label="Email"
+                        htmlFor="email"
+                        validateStatus={errors.email ? "error" : ""}
+                        help={errors.email?.message}
+                    >
+                        <Controller
+                            name="email"
+                            control={control}
+                            render={({ field }) => (
+                                <Input {...field}
+                                    id="email"
+                                    type="email"
+                                    placeholder="your@email.com"
+                                    autoComplete="email"
+                                    size="large" />
+                            )}
+                        />
+                    </Form.Item>
 
-                <Form.Item
-                    name="password"
-                    label="Password"
-                    rules={[{ required: true, message: "Please input your password!" }]}
-                >
-                    <Input.Password
-                        placeholder="******"
-                        autoComplete="current-password"
-                        size="large"
-                    />
-                </Form.Item>
+                    <Form.Item
+                        label="Password"
+                        htmlFor="password"
+                        validateStatus={errors.password ? "error" : ""}
+                        help={errors.password?.message}
+                    >
+                        <Controller
+                            name="password"
+                            control={control}
+                            render={({ field }) => (
+                                <Input.Password {...field}
+                                    id="password"
+                                    placeholder="******"
+                                    autoComplete="current-password"
+                                    size="large"
+                                />
+                            )}
+                        />
+                    </Form.Item>
 
-                <Form.Item name="remember" valuePropName="checked" className="!mb-2">
-                    <Checkbox>Remember me</Checkbox>
-                </Form.Item>
+                    <Form.Item className="!mb-2">
+                        <Controller
+                            name="remember"
+                            control={control}
+                            defaultValue={false}
+                            render={({ field }) => (
+                                <Checkbox {...field} checked={field.value}>
+                                    Remember me
+                                </Checkbox>
+                            )}
+                        />
+                    </Form.Item>
 
-                <Form.Item className="mt-4">
+                    <Form.Item>
+                        <Button
+                            type="primary"
+                            size="large"
+                            className="w-full !font-semibold"
+                            htmlType="submit"
+                            loading={isSubmitting}
+                        >
+                            Sign In
+                        </Button>
+                    </Form.Item>
+
+                    <div className="text-center">
+                        <Link to="/forgot-password" className=" !text-gray-700 dark:!text-neutral-200 hover:!underline">
+                            Forgot your password?
+                        </Link>
+                    </div>
+                </Form>
+                <Divider plain className="!my-2">or</Divider>
+                <div className="flex flex-col gap-3">
                     <Button
-                        type="primary"
+                        icon={<img src={googleImg} alt="Google" className="w-5 h-5" />}
+                        onClick={() => handleOAuthLogin("google")}
                         size="large"
                         className="w-full"
-                        htmlType="submit"
-                        loading={loading || status === "loading"}
                     >
-                        Sign In
+                        Sign in with Google
                     </Button>
-                </Form.Item>
-            </Form>
-            <div className="text-center">
-                <Link to="/forgot-password" className="!text-gray-700 hover:!underline">
-                    Forgot your password?
-                </Link>
-            </div>
-            <Divider plain className="!my-2">or</Divider>
-
-            <div className="flex flex-col gap-3">
-                <Button
-                    icon={<img src={googleImg} alt="Google" className="w-5 h-5" />}
-                    size="large"
-                    className="w-full"
-                >
-                    Sign in with Google
-                </Button>
-                <Button
-                    icon={<img src={githubImg} alt="Github" className="w-5 h-5" />}
-                    size="large"
-                    className="w-full"
-                >
-                    Sign in with Github
-                </Button>
-                <Text className="self-center">
-                    Don&apos;t have an account?{" "}
-                    <Link strong to="/register" className="text-blue-500">
-                        Sign Up
-                    </Link>
-                </Text>
-            </div>
-        </Card>
+                    <Button
+                        onClick={() => handleOAuthLogin("github")}
+                        icon={<img src={githubImg} alt="Github" className="w-5 h-5" />}
+                        size="large"
+                        className="w-full"
+                    >
+                        Sign in with Github
+                    </Button>
+                    <Text className="self-center">
+                        Don&apos;t have an account?{" "}
+                        <Link strong to="/register" className="!text-gray-700 dark:!text-neutral-200 hover:!underline">
+                            Sign Up
+                        </Link>
+                    </Text>
+                </div>
+            </Card>
+        </>
     )
 }

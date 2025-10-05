@@ -17,6 +17,7 @@ const TopNavbarLayout = () => {
         <div className="min-h-screen flex flex-col">
             <header className="bg-white border-b p-4 flex justify-between items-center">
                 <div className="font-bold">Library</div>
+                <p>Welcome {user?.email}</p>
                 <nav>
                     {menuItems.map(item => (
                         <Link key={item.to} className="mr-4" to={item.to}>{item.label}</Link>
