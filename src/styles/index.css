@@ -1,14 +1,17 @@
 @import "tailwindcss";
 
+@theme {
+    --color-bg-dark: hsl(0, 0%, 90%);
+    --color-bg: hsl(0, 0%, 55%);
+    --color-bg-light: hsl(0, 0%, 100%);
+    --color-text: hsl(0, 0%, 5%);
+    --color-text-muted: hsl(0, 0%, 30%);
 
-/* Option 1: Calm & Professional (Blue Theme)
-
-Primary: #1E3A8A (Deep Navy Blue)
-
-Secondary: #2563EB (Bright Blue)
-
-Background: #F9FAFB (Light Gray / Off-White)
-
-Accent: #10B981 (Teal / Success)
-
-Text: #111827 (Almost Black) */
+    @media (prefers-color-scheme: dark) {
+        --color-bg-dark: hsl(0, 0%, 0%);
+        --color-bg: hsl(0, 0%, 5%);
+        --color-bg-light: hsl(0, 0%, 10%);
+        --color-text: hsl(0, 0%, 95%);
+        --color-text-muted: hsl(0, 0%, 70%);
+    }
+}

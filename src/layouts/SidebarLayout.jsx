@@ -4,7 +4,7 @@ import { MENU_CONFIG } from '../utils/menuConfig';
 import { ROLES } from '../utils/constants';
 import { Link, Outlet } from 'react-router';
 import { logout } from '../features/auth/authSlice';
-import { Layout, Menu } from 'antd';
+import { Button, Layout, Menu } from 'antd';
 import { Content, Footer, Header } from 'antd/es/layout/layout';
 import Sider from 'antd/es/layout/Sider';
 
@@ -19,9 +19,16 @@ const SidebarLayout = () => {
 
     return (
         <Layout className='h-screen w-screen'>
-            <Header>Header</Header>
+            <Header className="flex justify-between items-center px-6">
+                <h1 className="text-text text-xl font-semibold">
+                    📚 Library Management System
+                </h1>
+                <Button type="primary" onClick={() => setDarkMode(!darkMode)}>
+                    Dark
+                </Button>
+            </Header>
             <Layout>
-                <Sider width="25%">
+                <Sider width="20%">
                     <Menu
                         mode="inline"
                         selectedKeys={[location.pathname]}
@@ -38,25 +45,6 @@ const SidebarLayout = () => {
             </Layout>
             <Footer>Footer</Footer>
         </Layout>
-        // <div className="min-h-screen flex">
-        //     <aside className="w-64 bg-white border-r p-4">
-        //         <div className="font-bold mb-6">Admin Panel</div>
-        //         <Menu mode='inline' selectedKeys={[location.pathname]} items={menuItems.map((item) => ({
-        //             key: item.to,
-        //             lable: <Link to={item.to}>{item.label}</Link>,
-        //             icon: item.icon ? React.createElement(item.icon) : null,
-        //         }))}
-        //             onClick={({ key }) => navigate(key)}
-        //         />
-        //     </aside>
-        //     <main className="flex-1 p-6">
-        //         <div className="flex justify-between mb-4">
-        //             <div>Welcome {user?.email}</div>
-        //             <button onClick={() => dispatch(logout())}>Logout</button>
-        //         </div>
-        //         <Outlet />
-        //     </main>
-        // </div>
     );
 }
 
