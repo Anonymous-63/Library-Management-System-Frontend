@@ -1,40 +1,31 @@
-import { Navigate, Route, Routes } from "react-router"
-import AuthLayout from "../layouts/AuthLayout"
-import Login from "../features/auth/pages/Login"
-import DashboardLayout from "../layouts/DashboardLayout"
-import { useSelector } from "react-redux"
-import DashboardLanding from "../layouts/DashboardLanding"
+import { Suspense } from "react";
+import ProtectedRoute from "./ProtectedRoute";
+import { ROUTES } from "./routeConfig";
+import { Navigate, Route, Routes } from "react-router";
 
-export function RequireAuth({ children, allowedRoles, allowedPrivileges }) {
-    const token = useSelector(s => s.auth.accessToken);
-    const user = useSelector(s => s.auth.user);
-    const privileges = useSelector(s => s.auth.privileges);
+const renderRoutes = (routesArray) =>
+    routesArray.map((route, index) => {
+        const { path, element, layout: Layout, protected: isProtected, allowedRoles, allowedPrivileges } = route;
 
-    if (!token) return <Navigate to="/login" replace />;
+        let content = element;
+        if (isProtected) {
+            content = <ProtectedRoute element={element} allowedRoles={allowedRoles} allowedPrivileges={allowedPrivileges} />;
+        }
 
-    // Role-based check
-    if (allowedRoles && !user?.roles?.some(r => allowedRoles.includes(r))) {
-        return <Navigate to="/dashboard" replace />;
-    }
+        if (Layout) {
+            content = <Layout>{content}</Layout>;
+        }
 
-    // Privilege-based check
-    if (allowedPrivileges && !privileges?.some(p => allowedPrivileges.includes(p))) {
-        return <Navigate to="/dashboard" replace />;
-    }
-
-    return children;
-}
+        return <Route key={index} path={path} element={content} />;
+    });
 
 export default function AppRoutes() {
     return (
-        <Routes>
-            <Route path="/login" element={<AuthLayout><Login /></AuthLayout>} />
-
-            <Route path="/dashboard/*" element={<RequireAuth><DashboardLayout /></RequireAuth>}>
-                <Route index element={<DashboardLanding />} />
-            </Route>
-
-            <Route path="/" element={<Navigate to="/dashboard" replace />} />
-        </Routes>
-    )
+        <Suspense fallback={<div>Loading...</div>}>
+            <Routes>
+                {renderRoutes(ROUTES)}
+                <Route path="*" element={<Navigate to="/dashboard" replace />} />
+            </Routes>
+        </Suspense>
+    );
 }

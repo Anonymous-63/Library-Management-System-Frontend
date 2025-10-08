@@ -1,7 +1,7 @@
 import { useEffect } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { deleteUser, fetchUsers } from "../usersSlice"
-import { Button } from "@mui/material"
+import { Button, Popconfirm } from "antd"
 
 export default function UsersPage(){
   const dispatch = useDispatch()
